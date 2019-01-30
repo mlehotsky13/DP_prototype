@@ -48,7 +48,7 @@ public abstract class Functions {
 				result += 2;
 			}
 		} else {
-			result += 3;
+			result += 4;
 		}
 
 		return result;
@@ -66,7 +66,7 @@ public abstract class Functions {
 					result += 2;
 				}
 			} else {
-				result += 3;
+				result += 4;
 			}
 		}
 
