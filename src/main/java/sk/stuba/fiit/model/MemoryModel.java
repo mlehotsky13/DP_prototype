@@ -55,6 +55,9 @@ public class MemoryModel<T> {
 	public MemoryModel<T> processAction(ArraySimpleWriteAction<T> action) {
 		log.debug("Handling {} action.", ArraySimpleWriteAction.class.getSimpleName());
 
+		MemoryNode<T> memoryNode = memory.get(action.varName).get(action.index);
+		memory.get(action.varName).set(action.index, new MemoryValueNode<T>(memoryNode.name, action.value));
+
 		return this;
 	}
 
