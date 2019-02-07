@@ -20,8 +20,6 @@ public class MemoryModelTests {
 		List<Action<Integer>> actions = mock_func1_a_actions();
 
 		actions.forEach(action -> memorymodel.processAction(action));
-
-		// assert.asserttrue(memorymodel.getvarvalueatindex("arr", 1) > 3);
 	}
 
 	@Test
@@ -30,8 +28,14 @@ public class MemoryModelTests {
 		List<Action<Integer>> actions = mock_func1_b_actions();
 
 		actions.forEach(action -> memorymodel.processAction(action));
+	}
 
-		// assert.asserttrue(memorymodel.getvarvalueatindex("arr", 1) > 3);
+	@Test
+	public void testfunc1_c() {
+		MemoryModel<Integer> memorymodel = new MemoryModel<Integer>();
+		List<Action<Integer>> actions = mock_func1_c_actions();
+
+		actions.forEach(action -> memorymodel.processAction(action));
 	}
 
 	private List<Action<Integer>> mock_func1_a_actions() {
@@ -46,5 +50,13 @@ public class MemoryModelTests {
 		return Arrays.asList(//
 				new ArrayVariableDeclarationAction<Integer>("arr", Arrays.asList(7, 5, 3, 1)), //
 				new ArrayConditionalWriteAction<>("arr", i, 4));
+	}
+
+	private List<Action<Integer>> mock_func1_c_actions() {
+		MemoryNode<Integer> i = new MemoryValueNode<>("i", 0);
+
+		return Arrays.asList(//
+				new ArrayVariableDeclarationAction<Integer>("arr", Arrays.asList(7, 5, 3, 1)), //
+				new ArrayConditionalWriteAction<>("arr", i, 3));
 	}
 }

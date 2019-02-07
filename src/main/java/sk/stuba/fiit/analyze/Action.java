@@ -21,15 +21,6 @@ public abstract class Action<T> {
 		}
 	}
 
-	public static class ArrayReadAction<T> extends Action<T> {
-		public int index;
-
-		public ArrayReadAction(String name, int index) {
-			super(name);
-			this.index = index;
-		}
-	}
-
 	public static class ArraySimpleWriteAction<T> extends Action<T> {
 		public Integer index;
 		public T value;
@@ -49,17 +40,6 @@ public abstract class Action<T> {
 		public ArrayConditionalWriteAction(String name, MemoryNode<T> conditionNode, T value) {
 			super(name);
 			this.conditionNode = conditionNode;
-			this.value = value;
-		}
-	}
-
-	public static class ArrayComparisonAction<T> extends Action<T> {
-		public int index;
-		public T value;
-
-		public ArrayComparisonAction(String name, Integer index, T value) {
-			super(name);
-			this.index = index;
 			this.value = value;
 		}
 	}

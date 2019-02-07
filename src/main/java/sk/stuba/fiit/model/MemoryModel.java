@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import sk.stuba.fiit.analyze.Action;
 import sk.stuba.fiit.analyze.Action.ArrayConditionalWriteAction;
-import sk.stuba.fiit.analyze.Action.ArrayReadAction;
 import sk.stuba.fiit.analyze.Action.ArraySimpleWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayVariableDeclarationAction;
 
@@ -27,8 +26,6 @@ public class MemoryModel<T> {
 
 		if (ArrayVariableDeclarationAction.class.equals(action.getClass())) {
 			processAction((ArrayVariableDeclarationAction<T>) action);
-		} else if (ArrayReadAction.class.equals(action.getClass())) {
-			processAction((ArrayReadAction<T>) action);
 		} else if (ArraySimpleWriteAction.class.equals(action.getClass())) {
 			processAction((ArraySimpleWriteAction<T>) action);
 		} else if (ArrayConditionalWriteAction.class.equals(action.getClass())) {
@@ -51,12 +48,6 @@ public class MemoryModel<T> {
 		}
 
 		log.debug("Initialized array {}: {}", action.varName, memory.get(action.varName));
-
-		return this;
-	}
-
-	public MemoryModel<T> processAction(ArrayReadAction<T> action) {
-		log.debug("Handling {} action.", ArrayReadAction.class.getSimpleName());
 
 		return this;
 	}
