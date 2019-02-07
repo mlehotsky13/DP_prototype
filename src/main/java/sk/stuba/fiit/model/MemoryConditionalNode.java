@@ -9,6 +9,11 @@ public class MemoryConditionalNode<T> extends MemoryNode<T> {
 
 	Deque<ConditionalExpression<T>> conditionalExpressions = new ArrayDeque<>();
 
+	// TODO
+	public MemoryConditionalNode(String name) {
+		super(name);
+	}
+
 	@Override
 	public T evaluate() {
 		Iterator<ConditionalExpression<T>> it = conditionalExpressions.iterator();

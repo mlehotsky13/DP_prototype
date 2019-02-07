@@ -1,38 +1,52 @@
 package sk.stuba.fiit.analyze;
 
+import java.util.List;
+
 public abstract class Action<T> {
 
-	protected String name;
-	protected T value;
+	public String varName;
 
 	public Action(String name) {
-		this.name = name;
+		this.varName = name;
 	}
 
-	public Action(String name, T value) {
-		this.name = name;
-		this.value = value;
-	}
+	public static class ArrayVariableDeclarationAction<T> extends Action<T> {
+		public List<T> values;
 
-	public static class VariableDeclarationAction<T> extends Action<T> {
-		public VariableDeclarationAction(String name) {
+		public ArrayVariableDeclarationAction(String name, List<T> values) {
 			super(name);
-		}
-
-		public VariableDeclarationAction(String name, T value) {
-			super(name, value);
+			this.values = values;
 		}
 	}
 
-	public static class ReadAction<T> extends Action<T> {
-		public ReadAction(String name, T value) {
-			super(name, value);
+	public static class ArrayReadAction<T> extends Action<T> {
+		public int index;
+
+		public ArrayReadAction(String name, int index) {
+			super(name);
+			this.index = index;
 		}
 	}
 
-	public static class WriteAction<T> extends Action<T> {
-		public WriteAction(String name, T value) {
-			super(name, value);
+	public static class ArrayWriteAction<T> extends Action<T> {
+		public int index;
+		public T value;
+
+		public ArrayWriteAction(String name, int index, T value) {
+			super(name);
+			this.index = index;
+			this.value = value;
+		}
+	}
+
+	public static class ArrayComparisonAction<T> extends Action<T> {
+		public int index;
+		public T value;
+
+		public ArrayComparisonAction(String name, int index, T value) {
+			super(name);
+			this.index = index;
+			this.value = value;
 		}
 	}
 }

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import sk.stuba.fiit.analyze.Action;
 import sk.stuba.fiit.analyze.Analyzer;
-import sk.stuba.fiit.analyze.AnalyzerImpl;
 import sk.stuba.fiit.constants.Function;
 import sk.stuba.fiit.model.MemoryModel;
 
@@ -18,14 +17,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 	private static final Logger log = LoggerFactory.getLogger(GeneratorServiceImpl.class);
 
 	private Analyzer analyzer;
-	private MemoryModel memoryModel;
+	private MemoryModel<Integer> memoryModel;
 
 	public GeneratorServiceImpl() {
-		analyzer = new AnalyzerImpl();
-		memoryModel = new MemoryModel();
+		memoryModel = new MemoryModel<>();
 	}
 
-	public GeneratorServiceImpl(Analyzer analyzer, MemoryModel memoryModel) {
+	public GeneratorServiceImpl(Analyzer analyzer, MemoryModel<Integer> memoryModel) {
 		this.analyzer = analyzer;
 		this.memoryModel = memoryModel;
 	}
@@ -40,7 +38,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
 	private Map<String, ?> generateInputs(Method method) {
 		// Analyze method and get actions
-		List<Action> actions = analyzer.analyzeMethod(method);
+		List<Action<Integer>> actions = analyzer.analyzeMethod(method);
 
 		// Process all actions from method in MemoryModel
 		actions.forEach(action -> memoryModel.processAction(action));

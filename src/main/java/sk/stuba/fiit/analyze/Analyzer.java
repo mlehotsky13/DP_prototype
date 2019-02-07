@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface Analyzer {
 
-	public List<Action> analyzeMethod(Method method);
+	public List<Action<Integer>> analyzeMethod(Method method);
 }
