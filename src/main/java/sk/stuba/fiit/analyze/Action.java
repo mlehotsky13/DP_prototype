@@ -2,6 +2,8 @@ package sk.stuba.fiit.analyze;
 
 import java.util.List;
 
+import sk.stuba.fiit.model.MemoryNode;
+
 public abstract class Action<T> {
 
 	public String varName;
@@ -28,13 +30,25 @@ public abstract class Action<T> {
 		}
 	}
 
-	public static class ArrayWriteAction<T> extends Action<T> {
-		public int index;
+	public static class ArraySimpleWriteAction<T> extends Action<T> {
+		public Integer index;
 		public T value;
 
-		public ArrayWriteAction(String name, int index, T value) {
+		public ArraySimpleWriteAction(String name, int index, T value) {
 			super(name);
 			this.index = index;
+			this.value = value;
+		}
+	}
+
+	public static class ArrayConditionalWriteAction<T> extends Action<T> {
+		public Integer index;
+		public MemoryNode<T> conditionNode;
+		public T value;
+
+		public ArrayConditionalWriteAction(String name, MemoryNode<T> conditionNode, T value) {
+			super(name);
+			this.conditionNode = conditionNode;
 			this.value = value;
 		}
 	}
@@ -43,7 +57,7 @@ public abstract class Action<T> {
 		public int index;
 		public T value;
 
-		public ArrayComparisonAction(String name, int index, T value) {
+		public ArrayComparisonAction(String name, Integer index, T value) {
 			super(name);
 			this.index = index;
 			this.value = value;

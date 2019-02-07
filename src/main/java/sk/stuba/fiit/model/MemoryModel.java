@@ -1,17 +1,20 @@
 package sk.stuba.fiit.model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.stuba.fiit.analyze.Action;
+import sk.stuba.fiit.analyze.Action.ArrayConditionalWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayReadAction;
+import sk.stuba.fiit.analyze.Action.ArraySimpleWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayVariableDeclarationAction;
-import sk.stuba.fiit.analyze.Action.ArrayWriteAction;
 
 public class MemoryModel<T> {
 
@@ -26,8 +29,10 @@ public class MemoryModel<T> {
 			processAction((ArrayVariableDeclarationAction<T>) action);
 		} else if (ArrayReadAction.class.equals(action.getClass())) {
 			processAction((ArrayReadAction<T>) action);
-		} else if (ArrayWriteAction.class.equals(action.getClass())) {
-			processAction((ArrayWriteAction<T>) action);
+		} else if (ArraySimpleWriteAction.class.equals(action.getClass())) {
+			processAction((ArraySimpleWriteAction<T>) action);
+		} else if (ArrayConditionalWriteAction.class.equals(action.getClass())) {
+			processAction((ArrayConditionalWriteAction<T>) action);
 		}
 
 		return this;
@@ -56,30 +61,39 @@ public class MemoryModel<T> {
 		return this;
 	}
 
-	public MemoryModel<T> processAction(ArrayWriteAction<T> action) {
-		log.debug("Handling {} action.", ArrayWriteAction.class.getSimpleName());
+	public MemoryModel<T> processAction(ArraySimpleWriteAction<T> action) {
+		log.debug("Handling {} action.", ArraySimpleWriteAction.class.getSimpleName());
 
 		return this;
 	}
 
-	// public MemoryModel<T> processAction(Action<T> action) {
-	// log.debug("Handling {} action.", action.getClass().getSimpleName());
-	// System.out.println("Handling " + action.getClass().getSimpleName() + "
-	// action.");
-	// System.out.println("Handling " + action.getClass().getSimpleName() + "
-	// action.");
+	public MemoryModel<T> processAction(ArrayConditionalWriteAction<T> action) {
+		log.debug("Handling {} action.", ArrayConditionalWriteAction.class.getSimpleName());
 
-	// return this;
-	// }
+		List<MemoryNode<T>> array = memory.get(action.varName);
 
-	// public List<T> getVarValues(String varName) {
-	// return memory.get(varName)//
-	// .stream()//
-	// .map(memoryNode -> memoryNode.evaluate())//
-	// .collect(Collectors.toList());
-	// }
+		for (int i = 0; i < array.size(); i++) {
+			MemoryNode<T> memoryNode = array.get(i);
 
-	// public T getVarValueAtIndex(String varName, int index) {
-	// return memory.get(varName).get(index).evaluate();
-	// }
+			if (memoryNode instanceof MemoryValueNode) {
+				memoryNode = createConditionalNodeFromValueNode((MemoryValueNode<T>) memoryNode);
+			}
+
+			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression(action.value, action.conditionNode,
+					Arrays.asList(getSimpleEvaluatePredicate(action.value)));
+		}
+
+		return this;
+	}
+
+	private Predicate<MemoryNode<T>> getSimpleEvaluatePredicate(final T value) {
+		return (memoryNode) -> value.equals(memoryNode.evaluate());
+	}
+
+	private MemoryConditionalNode<T> createConditionalNodeFromValueNode(MemoryValueNode<T> valueNode) {
+		MemoryConditionalNode<T> conditionalNode = new MemoryConditionalNode<>(valueNode.name);
+		conditionalNode.addConditionalExpression(valueNode.value, null, null);
+
+		return conditionalNode;
+	}
 }
