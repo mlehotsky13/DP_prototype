@@ -1,5 +1,6 @@
 package sk.stuba.fiit.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ConditionalExpression<T> {
 
 	ConditionalExpression(T value, MemoryNode<T> conditionNode, List<Predicate<MemoryNode<T>>> predicates) {
 		this.value = value;
-		conditions.put(conditionNode, predicates);
+		conditions.put(conditionNode, new ArrayList<>(predicates));
 	}
 
 	public Optional<T> evaluate() {
