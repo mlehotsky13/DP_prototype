@@ -77,6 +77,7 @@ public class MemoryModel<T> {
 
 			if (memoryNode instanceof MemoryValueNode) {
 				memoryNode = createConditionalNodeFromValueNode((MemoryValueNode<T>) memoryNode);
+				array.set(i, memoryNode);
 			}
 
 			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression(action.value, action.conditionNode,
@@ -92,7 +93,7 @@ public class MemoryModel<T> {
 
 	private MemoryConditionalNode<T> createConditionalNodeFromValueNode(MemoryValueNode<T> valueNode) {
 		MemoryConditionalNode<T> conditionalNode = new MemoryConditionalNode<>(valueNode.name);
-		conditionalNode.addConditionalExpression(valueNode.value, null, null);
+		conditionalNode.addConditionalExpression(valueNode.value);
 
 		return conditionalNode;
 	}

@@ -3,6 +3,7 @@ package sk.stuba.fiit;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import sk.stuba.fiit.analyze.Action;
@@ -15,6 +16,7 @@ import sk.stuba.fiit.model.MemoryValueNode;
 public class MemoryModelTests {
 
 	@Test
+	@Ignore
 	public void testfunc1_a() {
 		MemoryModel<Integer> memorymodel = new MemoryModel<Integer>();
 		List<Action<Integer>> actions = mock_func1_a_actions();

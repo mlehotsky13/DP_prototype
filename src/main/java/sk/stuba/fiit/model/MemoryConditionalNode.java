@@ -16,6 +16,10 @@ public class MemoryConditionalNode<T> extends MemoryNode<T> {
 		super(name);
 	}
 
+	void addConditionalExpression(T value) {
+		conditionalExpressions.push(new ConditionalExpression<>(value));
+	}
+
 	void addConditionalExpression(T value, MemoryNode<T> conditionNode, List<Predicate<MemoryNode<T>>> predicates) {
 		conditionalExpressions.push(new ConditionalExpression<>(value, conditionNode, predicates));
 	}
