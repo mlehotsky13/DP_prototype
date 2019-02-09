@@ -44,6 +44,16 @@ public class FunctionTests {
 		assertEquals(Functions.func1_d(3), "2");
 	}
 
+	@Test
+	public void testFunc1_e() {
+		assertEquals(Functions.func1_e(4), "14");
+		assertEquals(Functions.func1_e(5), "15");
+		assertEquals(Functions.func1_e(6), "124");
+		assertEquals(Functions.func1_e(7), "125");
+		assertEquals(Functions.func1_e(1), "34");
+		assertEquals(Functions.func1_e(0), "35");
+	}
+
 	// @Test
 	// public void testFunc0() {
 	// assertEquals(Functions.func0(4), "1");

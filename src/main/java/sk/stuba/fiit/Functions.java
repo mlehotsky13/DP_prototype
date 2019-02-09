@@ -75,6 +75,38 @@ public abstract class Functions {
 
 		return result;
 	}
+
+	public static String func1_e(int i) {
+		String result = "";
+
+		int[] arr = { 5, 6, 9, 2, 1, 7, 17, 6, 63 };
+
+		if (i > 3 && i < 8) {
+			/* i = {4, 5, 6, 7} */
+			result += "1";
+			arr[i] += arr[i - 1] + arr[i - 2];
+			if (i > 5) {
+				result += "2";
+				/* i = {6, 7} */
+				arr[7] -= 20;
+			}
+		} else {
+			/* i = {0, 1, 2, 3, 8, 9, 10} */
+			result += "3";
+			arr[i] += 5;
+		}
+
+		if (arr[i] > 10) {
+			/* i = {2, 4, 5, 7, 8, 9} */
+			result += "4";
+		} else {
+			/* i = {0, 1, 3, 6, 10} */
+			result += "5";
+		}
+
+		return result;
+	}
+
 //
 //	public static String func1(int[] arr) {
 //		String result = "";
