@@ -43,4 +43,16 @@ public abstract class Action<T> {
 			this.value = value;
 		}
 	}
+
+	public static class ArrayConditionalAddAction<T> extends Action<T> {
+		public Integer index;
+		public MemoryNode<T> conditionNode;
+		public T value;
+
+		public ArrayConditionalAddAction(String name, MemoryNode<T> conditionNode, T value) {
+			super(name);
+			this.conditionNode = conditionNode;
+			this.value = value;
+		}
+	}
 }

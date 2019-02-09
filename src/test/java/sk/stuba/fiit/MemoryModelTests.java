@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import sk.stuba.fiit.analyze.Action;
+import sk.stuba.fiit.analyze.Action.ArrayConditionalAddAction;
 import sk.stuba.fiit.analyze.Action.ArrayConditionalWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayVariableDeclarationAction;
 import sk.stuba.fiit.model.MemoryModel;
@@ -38,6 +39,14 @@ public class MemoryModelTests {
 		actions.forEach(action -> memorymodel.processAction(action));
 	}
 
+	@Test
+	public void testfunc1_d() {
+		MemoryModel<Integer> memorymodel = new MemoryModel<Integer>();
+		List<Action<Integer>> actions = mock_func1_d_actions();
+
+		actions.forEach(action -> memorymodel.processAction(action));
+	}
+
 	private List<Action<Integer>> mock_func1_a_actions() {
 		return Arrays.asList(//
 				new ArrayVariableDeclarationAction<Integer>("arr", Arrays.asList(7, 5, 3, 1))//
@@ -58,5 +67,13 @@ public class MemoryModelTests {
 		return Arrays.asList(//
 				new ArrayVariableDeclarationAction<Integer>("arr", Arrays.asList(7, 5, 3, 1)), //
 				new ArrayConditionalWriteAction<>("arr", i, 3));
+	}
+
+	private List<Action<Integer>> mock_func1_d_actions() {
+		MemoryNode<Integer> i = new MemoryValueNode<>("i", 0);
+
+		return Arrays.asList(//
+				new ArrayVariableDeclarationAction<Integer>("arr", Arrays.asList(7, 5, 3, 1)), //
+				new ArrayConditionalAddAction<>("arr", i, 2));
 	}
 }

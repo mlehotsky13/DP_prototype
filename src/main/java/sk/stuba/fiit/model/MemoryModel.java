@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sk.stuba.fiit.analyze.Action;
+import sk.stuba.fiit.analyze.Action.ArrayConditionalAddAction;
 import sk.stuba.fiit.analyze.Action.ArrayConditionalWriteAction;
 import sk.stuba.fiit.analyze.Action.ArraySimpleWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayVariableDeclarationAction;
@@ -30,6 +31,8 @@ public class MemoryModel<T> {
 			processAction((ArraySimpleWriteAction<T>) action);
 		} else if (ArrayConditionalWriteAction.class.equals(action.getClass())) {
 			processAction((ArrayConditionalWriteAction<T>) action);
+		} else if (ArrayConditionalAddAction.class.equals(action.getClass())) {
+			processAction((ArrayConditionalAddAction<T>) action);
 		}
 
 		return this;
@@ -79,6 +82,37 @@ public class MemoryModel<T> {
 		}
 
 		return this;
+	}
+
+	public MemoryModel<T> processAction(ArrayConditionalAddAction<T> action) {
+		log.debug("Handling {} action.", ArrayConditionalWriteAction.class.getSimpleName());
+
+		List<MemoryNode<T>> array = memory.get(action.varName);
+
+		for (int i = 0; i < array.size(); i++) {
+			MemoryNode<T> memoryNode = array.get(i);
+
+			if (memoryNode instanceof MemoryValueNode) {
+				memoryNode = createConditionalNodeFromValueNode((MemoryValueNode<T>) memoryNode);
+				array.set(i, memoryNode);
+			}
+
+			Object addedValue = addValues(memoryNode.evaluate(), action.value);
+			// FIX: using ugly hack
+			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression((T) addedValue, action.conditionNode,
+					Arrays.asList(getSimpleEvaluatePredicate(action.value)));
+		}
+
+		return this;
+	}
+	
+	// FIX: ugly hack
+	private Object addValues(T value1, T value2) {
+		if (value1 instanceof Integer && value2 instanceof Integer) {
+			return (Integer) value1 + (Integer) value2;
+		}
+		
+		return null;
 	}
 
 	private Predicate<MemoryNode<T>> getSimpleEvaluatePredicate(final T value) {
