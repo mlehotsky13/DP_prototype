@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import sk.stuba.fiit.analyze.Action;
 import sk.stuba.fiit.analyze.Action.ArrayConditionalAddAction;
+import sk.stuba.fiit.analyze.Action.ArrayConditionalAddByMinusIndexAction;
 import sk.stuba.fiit.analyze.Action.ArrayConditionalWriteAction;
+import sk.stuba.fiit.analyze.Action.ArraySimpleSubtractAction;
 import sk.stuba.fiit.analyze.Action.ArraySimpleWriteAction;
 import sk.stuba.fiit.analyze.Action.ArrayVariableDeclarationAction;
 
@@ -33,6 +35,10 @@ public class MemoryModel<T> {
 			processAction((ArrayConditionalWriteAction<T>) action);
 		} else if (ArrayConditionalAddAction.class.equals(action.getClass())) {
 			processAction((ArrayConditionalAddAction<T>) action);
+		} else if (ArrayConditionalAddByMinusIndexAction.class.equals(action.getClass())) {
+			processAction((ArrayConditionalAddByMinusIndexAction<T>) action);
+		} else if (ArraySimpleSubtractAction.class.equals(action.getClass())) {
+			processAction((ArraySimpleSubtractAction<T>) action);
 		}
 
 		return this;
@@ -106,10 +112,63 @@ public class MemoryModel<T> {
 		return this;
 	}
 
+	public MemoryModel<T> processAction(ArrayConditionalAddByMinusIndexAction<T> action) {
+		log.debug("Handling {} action.", ArrayConditionalAddByMinusIndexAction.class.getSimpleName());
+
+		List<MemoryNode<T>> array = memory.get(action.varName);
+
+		for (int i = 0; i < array.size(); i++) {
+			MemoryNode<T> memoryNode = array.get(i);
+
+			if (i < action.minApplicableIndex || i > action.maxApplicableIndex) {
+				log.debug("Not applicable for index {}, therefore skipping.");
+				continue;
+			}
+
+			if (memoryNode instanceof MemoryValueNode) {
+				memoryNode = createConditionalNodeFromValueNode((MemoryValueNode<T>) memoryNode);
+				array.set(i, memoryNode);
+			}
+
+			Object addedValue = addValues(memoryNode.evaluate(),
+					array.get(array.indexOf(memoryNode) - action.minusIndex).evaluate());
+			// FIX: using ugly hack
+			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression((T) addedValue, action.conditionNode,
+					Arrays.asList(getIndexPredicate(action.varName, action.conditionNode)));
+		}
+
+		return this;
+	}
+
+	public MemoryModel<T> processAction(ArraySimpleSubtractAction<T> action) {
+		log.debug("Handling {} action.", ArraySimpleSubtractAction.class.getSimpleName());
+
+		MemoryNode<T> memoryNode = memory.get(action.varName).get(action.index);
+		Object subtractedValue = subtractValues(memoryNode.evaluate(), action.value);
+
+		if (memoryNode instanceof MemoryValueNode) {
+			memoryNode = new MemoryValueNode(memoryNode.name, subtractedValue);
+			memory.get(action.varName).set(action.index, memoryNode);
+		} else if (memoryNode instanceof MemoryConditionalNode) {
+			((MemoryConditionalNode) memoryNode).addConditionalExpression(subtractedValue);
+		}
+
+		return this;
+	}
+
 	// FIX: ugly hack
 	private Object addValues(T value1, T value2) {
 		if (value1 instanceof Integer && value2 instanceof Integer) {
 			return (Integer) value1 + (Integer) value2;
+		}
+
+		return null;
+	}
+
+	// FIX: ugly hack
+	private Object subtractValues(T value1, T value2) {
+		if (value1 instanceof Integer && value2 instanceof Integer) {
+			return (Integer) value1 - (Integer) value2;
 		}
 
 		return null;

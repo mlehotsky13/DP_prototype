@@ -7,9 +7,19 @@ import sk.stuba.fiit.model.MemoryNode;
 public abstract class Action<T> {
 
 	public String varName;
+	public int minApplicableIndex;
+	public int maxApplicableIndex;
 
 	public Action(String name) {
 		this.varName = name;
+		this.minApplicableIndex = 0;
+		this.maxApplicableIndex = Integer.MAX_VALUE;
+	}
+
+	public Action(String name, int minApplicableIndex, int maxApplicableIndex) {
+		this.varName = name;
+		this.minApplicableIndex = minApplicableIndex;
+		this.maxApplicableIndex = maxApplicableIndex;
 	}
 
 	public static class ArrayVariableDeclarationAction<T> extends Action<T> {
@@ -32,8 +42,18 @@ public abstract class Action<T> {
 		}
 	}
 
-	public static class ArrayConditionalWriteAction<T> extends Action<T> {
+	public static class ArraySimpleSubtractAction<T> extends Action<T> {
 		public Integer index;
+		public T value;
+
+		public ArraySimpleSubtractAction(String name, int index, T value) {
+			super(name);
+			this.index = index;
+			this.value = value;
+		}
+	}
+
+	public static class ArrayConditionalWriteAction<T> extends Action<T> {
 		public MemoryNode<T> conditionNode;
 		public T value;
 
@@ -45,7 +65,6 @@ public abstract class Action<T> {
 	}
 
 	public static class ArrayConditionalAddAction<T> extends Action<T> {
-		public Integer index;
 		public MemoryNode<T> conditionNode;
 		public T value;
 
@@ -53,6 +72,19 @@ public abstract class Action<T> {
 			super(name);
 			this.conditionNode = conditionNode;
 			this.value = value;
+		}
+	}
+
+	public static class ArrayConditionalAddByMinusIndexAction<T> extends Action<T> {
+		public Integer minusIndex;
+		public MemoryNode<T> conditionNode;
+		public T value;
+
+		public ArrayConditionalAddByMinusIndexAction(String name, MemoryNode<T> conditionNode, int minusIndex,
+				int minApplicableIndex, int maxApplicableIndex) {
+			super(name, minApplicableIndex, maxApplicableIndex);
+			this.conditionNode = conditionNode;
+			this.minusIndex = minusIndex;
 		}
 	}
 }
