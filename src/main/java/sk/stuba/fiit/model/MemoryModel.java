@@ -20,7 +20,7 @@ public class MemoryModel<T> {
 
 	private static final Logger log = LoggerFactory.getLogger(MemoryModel.class);
 
-	protected Map<String, List<MemoryNode<T>>> memory = new HashMap<>();
+	private Map<String, List<MemoryNode<T>>> memory = new HashMap<>();
 
 	public MemoryModel<T> processAction(Action<T> action) {
 		log.debug("Handling {} action.", Action.class.getSimpleName());
