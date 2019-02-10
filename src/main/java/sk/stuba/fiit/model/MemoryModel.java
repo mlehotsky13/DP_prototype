@@ -78,7 +78,7 @@ public class MemoryModel<T> {
 			}
 
 			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression(action.value, action.conditionNode,
-					Arrays.asList(getSimpleEvaluatePredicate(action.value)));
+					Arrays.asList(getIndexPredicate(action.varName, action.conditionNode)));
 		}
 
 		return this;
@@ -100,23 +100,23 @@ public class MemoryModel<T> {
 			Object addedValue = addValues(memoryNode.evaluate(), action.value);
 			// FIX: using ugly hack
 			((MemoryConditionalNode<T>) memoryNode).addConditionalExpression((T) addedValue, action.conditionNode,
-					Arrays.asList(getSimpleEvaluatePredicate(action.value)));
+					Arrays.asList(getIndexPredicate(action.varName, action.conditionNode)));
 		}
 
 		return this;
 	}
-	
+
 	// FIX: ugly hack
 	private Object addValues(T value1, T value2) {
 		if (value1 instanceof Integer && value2 instanceof Integer) {
 			return (Integer) value1 + (Integer) value2;
 		}
-		
+
 		return null;
 	}
 
-	private Predicate<MemoryNode<T>> getSimpleEvaluatePredicate(final T value) {
-		return (memoryNode) -> value.equals(memoryNode.evaluate());
+	private Predicate<MemoryNode<T>> getIndexPredicate(final String varName, final MemoryNode<T> conditionNode) {
+		return (memoryNode) -> conditionNode.evaluate().equals(this.memory.get(varName).indexOf(memoryNode));
 	}
 
 	private MemoryConditionalNode<T> createConditionalNodeFromValueNode(MemoryValueNode<T> valueNode) {
